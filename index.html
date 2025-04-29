@@ -1,0 +1,249 @@
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBC School System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #007bff;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #343a40;
+      color: white;
+      margin-top: 2rem;
+    }
+    .container {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    h2, h3 {
+      text-align: center;
+      color: #007bff;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 0.7rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 1rem;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    nav {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    nav button {
+      margin: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #6c757d;
+    }
+    .hidden {
+      display: none;
+    }
+    .record {
+      background: #f1f1f1;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>WELCOME TO KIMUMU CBC SCHOOL SYSTEM</h1>
+  <p>Empowering Learners for a Brighter Future</p>
+  <p>Making Sure Parents and Teachers Track their Student Grades Wisely </p>
+  <p>Only For Kimumu Students,Teachers & Parents
+               Welcome Aboard and Feel at Home 
+  </p>
+</header>
+
+<nav>
+  <button onclick="showSection('adminLogin')">Admin Panel</button>
+  <button onclick="showSection('parentPortal')">Parent Portal</button>
+</nav>
+
+<div class="container" id="adminLogin">
+  <h2>Admin Login</h2>
+  <input type="text" id="adminUsername" placeholder="Username">
+  <input type="password" id="adminPassword" placeholder="Password">
+  <button onclick="loginAdmin()">Login</button>
+</div>
+
+<div class="container hidden" id="adminPanel">
+  <h2>Admin Panel</h2>
+
+  <h3>Add Student</h3>
+  <input type="text" id="studentName" placeholder="Student Name">
+  <input type="text" id="Age"placeholder="Age">
+  <input type="text" id="assessmentNumber" placeholder="Assessment Number">
+  <input type="text" id="studentGrade" placeholder="Grade (e.g. Grade 9)">
+  <input type="text" id="studentEast/West" placeholder="East/West (e.g. 9w)">
+  <button onclick="saveStudent()">Save Student</button>
+
+  <h3>Add Student Record</h3>
+  <input type="text" id="recordDate" placeholder="Date">
+  <input type="text" id="recordName" placeholder="Student Name">
+  <input type="text" id="recordTerm" placeholder="Term (e.g. Term 1)">
+  <textarea id="subjectsMarks" placeholder="Enter Subject Marks (Maths: 80, English: 85, etc.)"></textarea>
+  <textarea id="indisciplineCase" placeholder="Indiscipline (if any)"></textarea>
+  <button onclick="saveRecord()">Save Record</button>
+
+  <h3>All Student Records</h3>
+  <button onclick="loadRecords()">Load Records</button>
+  <div id="recordsContainer">No records yet.</div>
+
+  <button style="background: black;" onclick="clearAllData()">Clear All Records</button>
+</div>
+
+<div class="container hidden" id="parentPortal">
+  <h2>Parent Portal</h2>
+  <input type="text" id="parentStudentName" placeholder="Enter Student Name">
+  <button onclick="searchStudent()">Search Record</button>
+  <div id="parentRecordsContainer"></div>
+</div>
+
+<footer>
+  Created by Edwin Kibiwot | Copyright © 2025
+</footer>
+
+<script>
+  function showSection(id) {
+    document.getElementById('adminLogin').classList.add('hidden');
+    document.getElementById('adminPanel').classList.add('hidden');
+    document.getElementById('parentPortal').classList.add('hidden');
+    document.getElementById(id).classList.remove('hidden');
+  }
+
+  function loginAdmin() {
+    const username = document.getElementById('adminUsername').value;
+    const password = document.getElementById('adminPassword').value;
+    if (username === 'kimumu' && password === 'kimumu@2025') {
+      showSection('adminPanel');
+    } else {
+      alert('Incorrect username or password!');
+    }
+  }
+
+  function saveStudent() {
+    const students = JSON.parse(localStorage.getItem('students') || '[]');
+    const student = {
+      name: document.getElementById('studentName').value,
+      assessmentNumber: document.getElementById('assessmentNumber').value,
+      grade: document.getElementById('studentGrade').value,
+      studentClass: document.getElementById('studentClass').value
+    };
+    students.push(student);
+    localStorage.setItem('students', JSON.stringify(students));
+    alert('Student added successfully!');
+  }
+
+  function saveRecord() {
+    const records = JSON.parse(localStorage.getItem('records') || '[]');
+    const record = {
+      name: document.getElementById('recordName').value,
+      term: document.getElementById('recordTerm').value,
+      subjects: document.getElementById('subjectsMarks').value,
+      indiscipline: document.getElementById('indisciplineCase').value
+    };
+    records.push(record);
+    localStorage.setItem('records', JSON.stringify(records));
+    alert('Record saved successfully!');
+  }
+
+  function loadRecords() {
+    const students = JSON.parse(localStorage.getItem('students') || '[]');
+    const records = JSON.parse(localStorage.getItem('records') || '[]');
+    const container = document.getElementById('recordsContainer');
+    container.innerHTML = '';
+
+    students.forEach(student => {
+      const studentRecord = records.find(r => r.name.toLowerCase() === student.name.toLowerCase());
+      if (studentRecord) {
+        container.innerHTML += `
+          <div class="record">
+            <strong>Name:</strong> ${student.name}<br>
+            <strong>Assessment No.:</strong> ${student.assessmentNumber}<br>
+            <strong>Grade:</strong> ${student.grade} (${student.studentClass})<br>
+            <strong>Term:</strong> ${studentRecord.term}<br>
+            <strong>Subjects:</strong><br> ${studentRecord.subjects.replace(/,/g, '<br>')}<br>
+            <strong>Indiscipline:</strong> ${studentRecord.indiscipline || 'None'}
+          </div>
+        `;
+      }
+    });
+
+    if (!container.innerHTML) {
+      container.innerHTML = "No records found.";
+    }
+  }
+
+  function searchStudent() {
+    const name = document.getElementById('parentStudentName').value.trim().toLowerCase();
+    const students = JSON.parse(localStorage.getItem('students') || '[]');
+    const records = JSON.parse(localStorage.getItem('records') || '[]');
+    const container = document.getElementById('parentRecordsContainer');
+    container.innerHTML = '';
+
+    const student = students.find(s => s.name.toLowerCase() === name);
+    const record = records.find(r => r.name.toLowerCase() === name);
+
+    if (student && record) {
+      container.innerHTML = `
+        <div class="record">
+          <strong>Name:</strong> ${student.name}<br>
+          <strong>Assessment No.:</strong> ${student.assessmentNumber}<br>
+          <strong>Grade:</strong> ${student.grade} (${student.studentClass})<br>
+          <strong>Term:</strong> ${record.term}<br>
+          <strong>Subjects:</strong><br> ${record.subjects.replace(/,/g, '<br>')}<br>
+          <strong>Indiscipline:</strong> ${record.indiscipline || 'None'}
+        </div>
+      `;
+    } else {
+      container.innerHTML = "No record found for this student.";
+    }
+  }
+
+  function clearAllData() {
+    if (confirm("Are you sure you want to clear all data?")) {
+      localStorage.removeItem('students');
+      localStorage.removeItem('records');
+      alert('All data cleared!');
+      loadRecords();
+    }
+  }
+</script>
+
+</body>
+</html>
